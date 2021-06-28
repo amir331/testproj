@@ -1,0 +1,301 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="utf-8">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <meta name="description" content="None">
+        
+        <link rel="canonical" href="https://example.com/">
+        <link rel="shortcut icon" href="img/favicon.ico">
+        <title>My Docs</title>
+        <link href="css/bootstrap.min.css" rel="stylesheet">
+        <link href="css/font-awesome.min.css" rel="stylesheet">
+        <link href="css/base.css" rel="stylesheet">
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/10.5.0/styles/github.min.css">
+
+        <script src="js/jquery-1.10.2.min.js" defer></script>
+        <script src="js/bootstrap.min.js" defer></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/10.5.0/highlight.min.js"></script>
+        <script>hljs.initHighlightingOnLoad();</script> 
+    </head>
+
+    <body class="homepage">
+        <div class="navbar fixed-top navbar-expand-lg navbar-dark bg-primary">
+            <div class="container">
+                <a class="navbar-brand" href=".">My Docs</a>
+
+                <!-- Expanded navigation -->
+                <div id="navbar-collapse" class="navbar-collapse collapse">
+
+                    <ul class="nav navbar-nav ml-auto">
+                        <li class="nav-item">
+                            <a href="#" class="nav-link" data-toggle="modal" data-target="#mkdocs_search_modal">
+                                <i class="fa fa-search"></i> Search
+                            </a>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+
+        <div class="container">
+            <div class="row">
+                    <div class="col-md-3"><div class="navbar-light navbar-expand-md bs-sidebar hidden-print affix" role="complementary">
+    <div class="navbar-header">
+        <button type="button" class="navbar-toggler collapsed" data-toggle="collapse" data-target="#toc-collapse" title="Table of Contents">
+            <span class="fa fa-angle-down"></span>
+        </button>
+    </div>
+
+    
+    <div id="toc-collapse" class="navbar-collapse collapse card bg-secondary">
+        <ul class="nav flex-column">
+            
+            <li class="nav-item" data-level="2"><a href="#table-of-contents" class="nav-link">Table of contents</a>
+              <ul class="nav flex-column">
+              </ul>
+            </li>
+            
+            <li class="nav-item" data-level="2"><a href="#how-to-use" class="nav-link">How to use</a>
+              <ul class="nav flex-column">
+              </ul>
+            </li>
+            
+            <li class="nav-item" data-level="2"><a href="#current-script-usage" class="nav-link">Current Script Usage</a>
+              <ul class="nav flex-column">
+              </ul>
+            </li>
+            
+            <li class="nav-item" data-level="2"><a href="#sources" class="nav-link">Sources</a>
+              <ul class="nav flex-column">
+              </ul>
+            </li>
+            
+            <li class="nav-item" data-level="2"><a href="#acknowledgements" class="nav-link">Acknowledgements</a>
+              <ul class="nav flex-column">
+              </ul>
+            </li>
+            
+            <li class="nav-item" data-level="2"><a href="#further-research" class="nav-link">Further Research</a>
+              <ul class="nav flex-column">
+              </ul>
+            </li>
+        </ul>
+    </div>
+</div></div>
+                    <div class="col-md-9" role="main">
+
+<pre><code>Automated creation and filling of a new wikibase instance with PubMed metadata and MeSH terms.
+</code></pre>
+<ul>
+<li>Automated inserts into a fresh Wikibase instance</li>
+<li>Scripts for automated property and item creation given a csv</li>
+<li>Scripts tested in a Windows system within a Ubuntu 20.04 terminal with Python 3.9.2</li>
+</ul>
+<h2 id="table-of-contents">Table of contents</h2>
+<ul>
+<li><a href="#how-to-use">How to use</a></li>
+<li><a href="#installation">Installation</a></li>
+<li><a href="#customizing-wikibase">Customizing Wikibase</a></li>
+<li><a href="#creating-properties">Creating Properties</a></li>
+<li><a href="#creating-items">Creating Items</a></li>
+<li><a href="#updating-item-connection">Updating Item Connection</a></li>
+<li><a href="#useful-docker-commands">Useful Docker Commands</a></li>
+<li><a href="#creating-backups">Creating Backups</a></li>
+<li><a href="#sources">Sources</a></li>
+<li><a href="#acknowledgments">Acknowledgments</a></li>
+<li><a href="#further-research">Further Research </a></li>
+</ul>
+<h2 id="how-to-use">How to use</h2>
+<h3 id="installation">Installation</h3>
+<pre><code>- Install &amp; Enable WSL2
+- Install Docker
+- For Windows: Install Ubuntu Terminal &amp; Windows Terminal from Windows Store &amp; relevant libraries
+    - https://codefellows.github.io/setup-guide/
+- Create Directory
+- git clone https://github.com/UB-Mannheim/RaiseWikibase
+cd RaiseWikibase/
+sudo apt install default-libmysqlclient-dev
+pip3 install -e .
+- env.tmpl &gt; rename to '.env' and insert usernames/password
+    - passwords must be at least 10 characters long!
+    - [WB_DB_USER], [WB_DB_NAME], [WB_ADMIN_USER] must be capitalized or ideally full cap in order to avoid db connection errors
+pip3 install -r requirements.txt
+- docker-compose up -d
+</code></pre>
+<h3 id="customizing-wikibase">Customizing Wikibase</h3>
+<pre><code>## Making Changes
+- LocalSettings.php.template
+## Extensions
+- Download Extension in ./RaiseWikibase/extensions
+- Add Volume to docker-ompose.yml
+    - ./extensions/TemplateStyles:/var/www/html/extensions/TemplateStyles
+- Add Volume to LocalSettings.php.template
+    -wfLoadExtension( 'TemplateStyles' );
+    ${DOLLAR}wgTidyConfig = [
+        'driver' =&gt; 'RaggettInternalPHP',
+        'tidyConfigFile' =&gt; &quot;${DOLLAR}IP/includes/tidy/tidy.conf&quot;,
+    ];
+</code></pre>
+<h3 id="creating-properties">Creating Properties</h3>
+<p>create_properties.py</p>
+<pre><code class="language-python">#Create MeSH relevant properties
+pmesh1 = property_wd('P672') #MeSH tree code
+pmesh2 = property_wd('P6694') #MeSH concept ID
+pmesh3 = property_wd('P9341') #MeSH qualifier ID 
+pmesh4 = property_wd('P486') #MeSH descriptor ID
+#pmesh5 = property_wd('') #MeSH Headings
+batch('wikibase-property', [pmesh1, pmesh2, pmesh3, pmesh4])
+</code></pre>
+<h3 id="creating-items">Creating Items</h3>
+<p>create_items_wd.py</p>
+<pre><code class="language-python">def upload_data(login_instance, config):
+    # load excel table to load into Wikibase
+    mydata = pd.read_csv(&quot;pubmed_data.csv&quot;)
+    for index, row in mydata.iterrows():
+        ## Prepare the statements to be added
+        item_statements = [] # all statements for one item
+        item_statements.append(wdi_core.WDString(mydata.loc[index].at['PubmedArticle_MedlineCitation_Article_ArticleTitle'], prop_nr=&quot;P11&quot;)) #title 
+        item_statements.append(wdi_core.WDString(mydata.loc[index].at['PubmedArticle_MedlineCitation_Article_AuthorList_Author_LastName'], prop_nr=&quot;P12&quot;)) #author
+
+        ## instantiate the Wikibase page, add statements, labels and descriptions
+        wbPage = wdi_core.WDItemEngine(data=item_statements, mediawiki_api_url=config.wikibase_url + &quot;/w/api.php&quot;)
+        wbPage.set_label(mydata.loc[index].at['PubmedArticle_MedlineCitation_Article_ArticleTitle'], lang=&quot;en&quot;)
+        wbPage.set_description(&quot;Article retrieved from PubMed&quot;, lang=&quot;en&quot;)
+
+        ## sanity check (debug)
+        pprint.pprint(wbPage.get_wd_json_representation())
+
+        ## write data to wikibase
+        wbPage.write(login_instance)
+</code></pre>
+<h3 id="updating-item-connection">Updating Item Connection</h3>
+<p>update_statements.py</p>
+<h3 id="useful-docker-commands">Useful Docker Commands</h3>
+<pre><code>### Stop Wikibase Docker
+docker-compose down
+### Remove uploaded Data &amp; run fresh Wikibase Instance
+sudo rm -rf mediawiki-*  query-service-data/ quickstatements-data/
+docker-compose up -d
+### Reload a single service (example: wikibase) to adopt new changes in settings
+docker-compose up --no-deps -d wikibase
+</code></pre>
+<h3 id="creating-backups">Creating Backups</h3>
+<pre><code>- Take snapshots of: docker-compose file, mounted files
+### Volume backup
+- docker run -v wikibase-registry_mediawiki-mysql-data:/volume -v /root/volumeBackups:/backup --rm loomchild/volume-backup backup mediawiki-mysql-data_20190129
+- docker run -v wikibase-registry_mediawiki-images-data:/volume -v /root/volumeBackups:/backup --rm loomchild/volume-backup backup mediawiki-images-data_20190129
+- docker run -v wikibase-registry_query-service-data:/volume -v /root/volumeBackups:/backup --rm loomchild/volume-backup backup query-service-data_20190129
+</code></pre>
+<h2 id="current-script-usage">Current Script Usage</h2>
+<ol>
+<li>General Wikibase Setup [o]</li>
+<li>create_properties.py [o]</li>
+<li>data_retrieval.py [x]<ul>
+<li>desired output: pubmed_data.xml or pubmed_data.csv 
+                - mesh_data.csv</li>
+</ul>
+</li>
+<li>create_mesh_items.py [x]</li>
+<li>create_items_wd.py [o]</li>
+</ol>
+<h2 id="sources">Sources</h2>
+<ul>
+<li>PubMed</li>
+<li>Wikidata</li>
+</ul>
+<h2 id="acknowledgements">Acknowledgements</h2>
+<h2 id="further-research">Further Research</h2>
+<ul>
+<li>Dynamically Adapt Property Creation with CSV </li>
+<li>Support for different formats than CSV</li>
+<li>Extract MeSH Entities from Wikidata</li>
+<li>Enter Wikibase into Wikibase Registry</li>
+<li>Authenticate Author Entity with either Scholia or </li>
+<li>Document new encountered Limits</li>
+<li>IR/NLP metrics on Abstracts</li>
+<li>MeSH Tree Hierarchy as Knowledge Graph Structure</li>
+</ul></div>
+            </div>
+        </div>
+
+        <footer class="col-md-12">
+            <hr>
+            <p>Documentation built with <a href="https://www.mkdocs.org/">MkDocs</a>.</p>
+        </footer>
+        <script>
+            var base_url = ".",
+                shortcuts = {"help": 191, "next": 78, "previous": 80, "search": 83};
+        </script>
+        <script src="js/base.js" defer></script>
+        <script src="search/main.js" defer></script>
+
+        <div class="modal" id="mkdocs_search_modal" tabindex="-1" role="dialog" aria-labelledby="searchModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h4 class="modal-title" id="searchModalLabel">Search</h4>
+                <button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
+            </div>
+            <div class="modal-body">
+                <p>From here you can search these documents. Enter your search terms below.</p>
+                <form>
+                    <div class="form-group">
+                        <input type="search" class="form-control" placeholder="Search..." id="mkdocs-search-query" title="Type search term here">
+                    </div>
+                </form>
+                <div id="mkdocs-search-results" data-no-results-text="No results found"></div>
+            </div>
+            <div class="modal-footer">
+            </div>
+        </div>
+    </div>
+</div><div class="modal" id="mkdocs_keyboard_modal" tabindex="-1" role="dialog" aria-labelledby="keyboardModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h4 class="modal-title" id="keyboardModalLabel">Keyboard Shortcuts</h4>
+                <button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
+            </div>
+            <div class="modal-body">
+              <table class="table">
+                <thead>
+                  <tr>
+                    <th style="width: 20%;">Keys</th>
+                    <th>Action</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr>
+                    <td class="help shortcut"><kbd>?</kbd></td>
+                    <td>Open this help</td>
+                  </tr>
+                  <tr>
+                    <td class="next shortcut"><kbd>n</kbd></td>
+                    <td>Next page</td>
+                  </tr>
+                  <tr>
+                    <td class="prev shortcut"><kbd>p</kbd></td>
+                    <td>Previous page</td>
+                  </tr>
+                  <tr>
+                    <td class="search shortcut"><kbd>s</kbd></td>
+                    <td>Search</td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+            <div class="modal-footer">
+            </div>
+        </div>
+    </div>
+</div>
+
+    </body>
+</html>
+
+<!--
+MkDocs version : 1.2.1
+Build Date UTC : 2021-06-28 17:58:06.718558+00:00
+-->
